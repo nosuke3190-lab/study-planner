@@ -1,7 +1,7 @@
 /* Mindeck の Service Worker。オフラインでの起動と Web Push の受け取りを担う */
 const VERSION = 'mindeck-v1'
 const SCOPE = self.registration.scope
-const SHELL = ['./', './index.html', './manifest.webmanifest', './favicon.svg', './icon-192.png']
+const SHELL = ['./', './index.html', './manifest.json', './favicon.svg', './icon-192.png']
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
