@@ -63,7 +63,7 @@ src/
   lib/         日付、タグ、保存まわりの小道具
 public/
   sw.js                 オフライン用のキャッシュと Push の受け取り
-  manifest.webmanifest  ホーム画面に追加するための情報
+  manifest.json         ホーム画面に追加するための情報
 server/        閉じている間の通知を送る中継（任意）
 ```
 

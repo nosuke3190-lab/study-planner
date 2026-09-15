@@ -2,6 +2,10 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
+import { startCapturing } from './lib/installPrompt'
+
+// Chrome の合図は読み込み中に来るので、何よりも先に待ち構える
+startCapturing()
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
