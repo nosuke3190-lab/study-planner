@@ -1,1 +1,104 @@
 @import "tailwindcss";
+
+/* Light is the designed mode; dark mirrors it so the app is usable at night.
+   Every color is defined here once and mapped into Tailwind below. */
+:root {
+  --c-canvas: #f5f5f4;
+  --c-surface: #ffffff;
+  --c-surface-2: #eeedeb;
+  --c-line: #e6e5e3;
+  --c-line-strong: #dedcd8;
+  --c-ink: #0a0a0a;
+  --c-ink-2: #5c5c5c;
+  --c-ink-3: #9a9a9a;
+  --c-inverse: #ffffff;
+
+  --c-task: #2a78d6;
+  --c-note: #eb6834;
+  --c-idea: #1baf7a;
+  --c-danger: #d03b3b;
+  --c-good: #0ca30c;
+
+  --c-focus-bg: #141413;
+  --c-focus-ink: #fafafa;
+  --c-focus-ink-2: #6e6e6c;
+  --c-focus-line: #2a2a28;
+  --c-focus-line-2: #3a3a37;
+  --c-focus-ring: #242422;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --c-canvas: #0e0e0d;
+    --c-surface: #1a1a19;
+    --c-surface-2: #242422;
+    --c-line: #2b2b29;
+    --c-line-strong: #3a3a37;
+    --c-ink: #f5f5f4;
+    --c-ink-2: #a9a8a3;
+    --c-ink-3: #77766f;
+    --c-inverse: #0a0a0a;
+
+    --c-task: #3987e5;
+    --c-note: #d95926;
+    --c-idea: #199e70;
+    --c-danger: #e06a6a;
+    --c-good: #2fb82f;
+  }
+}
+
+@theme inline {
+  --color-canvas: var(--c-canvas);
+  --color-surface: var(--c-surface);
+  --color-surface2: var(--c-surface-2);
+  --color-line: var(--c-line);
+  --color-linestrong: var(--c-line-strong);
+  --color-ink: var(--c-ink);
+  --color-ink2: var(--c-ink-2);
+  --color-ink3: var(--c-ink-3);
+  --color-inverse: var(--c-inverse);
+  --color-task: var(--c-task);
+  --color-note: var(--c-note);
+  --color-idea: var(--c-idea);
+  --color-danger: var(--c-danger);
+  --color-good: var(--c-good);
+  --color-focusbg: var(--c-focus-bg);
+  --color-focusink: var(--c-focus-ink);
+  --color-focusink2: var(--c-focus-ink-2);
+  --color-focusline: var(--c-focus-line);
+  --color-focusline2: var(--c-focus-line-2);
+  --color-focusring: var(--c-focus-ring);
+
+  --font-sans: "Zen Kaku Gothic New", "Hiragino Sans", "Noto Sans JP", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+html, body, #root { height: 100%; }
+
+body {
+  margin: 0;
+  background: var(--c-canvas);
+  color: var(--c-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  overscroll-behavior-y: none;
+}
+
+.num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+
+.safe-t { padding-top: env(safe-area-inset-top, 0px); }
+.safe-b { padding-bottom: env(safe-area-inset-bottom, 0px); }
+
+.no-scrollbar { scrollbar-width: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+
+/* 素の要素だけ整える。@layer base に置かないと、レイヤー外のこの指定が
+   Tailwind のユーティリティ（text-* など）を上書きしてしまう */
+@layer base {
+  input, textarea, button, select { font: inherit; color: inherit; }
+  textarea { resize: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}

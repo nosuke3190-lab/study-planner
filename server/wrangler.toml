@@ -1,0 +1,17 @@
+name = "mindeck-push"
+main = "src/index.ts"
+compatibility_date = "2026-01-01"
+
+# 1 分ごとに、その時刻に来た通知だけ送る
+[triggers]
+crons = ["* * * * *"]
+
+# 予約と購読の置き場。id は自分のアカウントのものに置き換える
+[[kv_namespaces]]
+binding = "SUBS"
+id = "ここに KV namespace の id を入れる"
+
+[vars]
+VAPID_SUBJECT = "mailto:you@example.com"
+# GitHub Pages に置いたアプリの URL
+ALLOWED_ORIGIN = "https://YOUR-NAME.github.io"

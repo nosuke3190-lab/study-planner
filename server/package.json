@@ -1,0 +1,17 @@
+{
+  "name": "mindeck-push",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "keys": "node scripts/generate-vapid-keys.mjs",
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "test": "node test/push.test.mjs"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^5.20260911.1",
+    "typescript": "~6.0.2",
+    "wrangler": "^4.0.0"
+  }
+}

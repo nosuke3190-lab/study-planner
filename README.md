@@ -1,32 +1,75 @@
-# React + TypeScript + Vite
+# Mindeck
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+思いついたら書き留めて、あとで仕分けて、集中して、夜に振り返る。
+スマホで自分ひとりが使うための生産性アプリです。
 
-Currently, two official plugins are available:
+データはすべてその端末のブラウザの中だけに保存されます。アカウントもサーバーも
+要りません（閉じている間の通知だけは例外で、`server/` の中継が要ります）。
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## できること
 
-## React Compiler
+- **書き留める** — 開いてすぐの入力欄に放り込む。種類を選ばなければ「未整理」に貯まる。
+- **仕分ける** — 未整理を 1 件ずつ、タスク / ノート / アイデア に振り分ける。
+  タスクにするときは「今日・明日・日付・いつか」をその場で決める。
+- **タスク** — サブタスク、くり返し（毎日・毎週の曜日）、優先度 3 段階。
+  ホームの行を押すと完了が付く。
+- **試験** — 何件でも登録でき、一番近いものの残り日数がホームに出る。
+- **集中** — 長さを自分で決めるタイマー。回している間は全画面になり、メモだけ書ける。
+- **振り返り** — 自由記述の日記と、直近 7 日の完了タスク数のグラフ。
+  カレンダーから過去の日記に飛べる。
+- **探す** — 全文検索と、本文に `#` で書いたタグでの絞り込み。
+- **通知** — メモごとに日時を決めて通知。日記のリマインダー。タイマーの終了。
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+ホーム画面に追加すると、ブラウザの枠なしで開き、電波がなくても立ち上がります。
 
-## Expanding the Oxlint configuration
+## 動かす
 
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```bash
+npm install
+npm run dev
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+| コマンド | すること |
+| --- | --- |
+| `npm run dev` | 手元で動かす |
+| `npm run build` | `dist/` に書き出す |
+| `npm run lint` | oxlint をかける |
+| `npm run preview` | 書き出したものを確かめる |
+
+GitHub Pages への公開は `.github/workflows/deploy.yml` が受け持ちます。
+`/<リポジトリ名>/` の下に置かれるので、ビルド時に `VITE_BASE` を渡しています。
+
+## 通知について
+
+決めた時刻にスマホへ通知を出すには、**アプリを開いていない間も誰かが鳴らしに
+来る**必要があります。ブラウザのアプリが自分で時刻を予約する仕組みは iOS にも
+Android にもありません。そのため通知は 2 段構えです。
+
+1. **アプリが開いている間** — アプリ自身が時刻を見て通知します。設定は要りません。
+2. **閉じている間** — `server/` の中継（Cloudflare Workers）から Web Push を送ります。
+   立てかたは [server/README.md](server/README.md) にあります。
+
+2 を用意していない場合、通知の時刻を過ぎたメモは次にアプリを開いたときに
+「閉じている間に N 件の通知予定が過ぎました」とまとめて出ます。
+
+## 中身
+
+```
+src/
+  store/       localStorage に載せたデータと、それを触る操作
+  hooks/       通知、集中タイマー、ホーム画面への追加、Web Push
+  screens/     画面ごとの中身
+  components/  画面をまたいで使う部品
+  lib/         日付、タグ、保存まわりの小道具
+public/
+  sw.js                 オフライン用のキャッシュと Push の受け取り
+  manifest.webmanifest  ホーム画面に追加するための情報
+server/        閉じている間の通知を送る中継（任意）
+```
+
+## 見た目
+
+白黒を基本に、色は情報の区別にだけ使います。タスクが青、ノートがオレンジ、
+アイデアが緑。この 3 色とグラフの青は、色覚特性のある人にも見分けられるか、
+背景とのコントラストが足りるかを確かめたうえで選んでいます。
+暗いところ向けの配色にも切り替わります。
