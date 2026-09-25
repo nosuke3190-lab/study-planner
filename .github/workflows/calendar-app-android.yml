@@ -1,0 +1,74 @@
+name: カレンダーアプリ (Android)
+
+on:
+  push:
+    paths:
+      - 'calendar-app/**'
+      - '.github/workflows/calendar-app-android.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: calendar-app-android-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: calendar-app
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: calendar-app/package-lock.json
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: 依存パッケージのインストール
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: 画面部分のビルド
+        run: npm run build
+
+      - name: Android プロジェクトへ反映
+        run: npx cap sync android
+
+      - name: APK のビルド
+        working-directory: calendar-app/android
+        env:
+          VERSION_CODE: ${{ github.run_number }}
+        run: ./gradlew assembleRelease --no-daemon
+
+      - name: APK をまとめる
+        run: cp android/app/build/outputs/apk/release/app-release.apk calendar.apk
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: calendar-apk
+          path: calendar-app/calendar.apk
+
+      - name: リリースページに最新版を置く
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release delete calendar-app-latest --yes --cleanup-tag || true
+          gh release create calendar-app-latest calendar.apk \
+            --target "$GITHUB_SHA" \
+            --prerelease \
+            --title "カレンダー 最新版 (1.0.${{ github.run_number }})" \
+            --notes "スマホでこのページを開き、下の calendar.apk をタップしてインストールしてください。（ブランチ: ${GITHUB_REF_NAME}）"

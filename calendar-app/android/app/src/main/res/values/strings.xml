@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">カレンダー</string>
+    <string name="title_activity_main">カレンダー</string>
+    <string name="package_name">io.github.nosuke3190.calendar</string>
+    <string name="custom_url_scheme">io.github.nosuke3190.calendar</string>
+</resources>
