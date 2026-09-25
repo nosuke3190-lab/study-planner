@@ -14,9 +14,9 @@ export interface CalendarEvent {
   color: ColorId
   allDay: boolean
   startDate: string // yyyy-MM-dd
-  startTime: string // HH:mm（終日のときは使わない）
+  startTime: string // HH:mm。'' は「時刻なし」（終日のときは使わない）
   endDate: string   // yyyy-MM-dd
-  endTime: string   // HH:mm（終日のときは使わない）
+  endTime: string   // HH:mm。'' は「時刻なし」（終日のときは使わない）
   reminder: Reminder
   allDayReminderDay: AllDayReminderDay
   allDayReminderTime: string // HH:mm

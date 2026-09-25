@@ -1,7 +1,7 @@
 import { useEffect, useRef, type MouseEvent } from 'react'
 import type { CalendarEvent, Settings } from '../types'
 import { COLOR_MAP } from '../types'
-import { WEEKDAYS, occursOn, toKey, toMinutes, weekdayClass } from '../lib/date'
+import { WEEKDAYS, daySpan, occursOn, toKey, weekdayClass } from '../lib/date'
 import { holidayName } from '../lib/holidays'
 
 const HOUR_PX = 48
@@ -25,13 +25,27 @@ interface Placed {
   cols: number
 }
 
+/** その日に時刻がまったくない予定（終日・時刻なし）は上の「終日」の段に出す */
+function isUntimedOn(event: CalendarEvent, key: string): boolean {
+  const span = daySpan(event, key)
+  return span.start === null && span.end === null
+}
+
+function timeText(event: CalendarEvent, key: string): string {
+  const span = daySpan(event, key)
+  if (span.start !== null) return event.startDate === key ? event.startTime : '0:00'
+  return `〜${event.endTime}`
+}
+
 /** 1日分の時間のある予定を、重なりに応じて横に並べる */
 function layoutDay(events: CalendarEvent[], key: string): Placed[] {
   const items = events
-    .filter(e => !e.allDay && occursOn(e, key))
+    .filter(e => occursOn(e, key) && !isUntimedOn(e, key))
     .map(e => {
-      const start = e.startDate === key ? toMinutes(e.startTime) : 0
-      const end = e.endDate === key ? toMinutes(e.endTime) : 24 * 60
+      // 片方の時刻がないときは 1 時間分の枠で表示する
+      const span = daySpan(e, key)
+      const start = span.start ?? Math.max(0, (span.end ?? 60) - 60)
+      const end = span.end ?? Math.min(24 * 60, start + 60)
       return { event: e, start, end: Math.max(end, start + 30), col: 0, cols: 1 }
     })
     .sort((a, b) => a.start - b.start || b.end - a.end)
@@ -68,7 +82,7 @@ export default function WeekView({ days, today, nowMinutes, events, settings, on
     if (scrollRef.current) scrollRef.current.scrollTop = 7 * HOUR_PX - 8
   }, [])
 
-  const allDayByDay = keys.map(k => events.filter(e => e.allDay && occursOn(e, k)))
+  const allDayByDay = keys.map(k => events.filter(e => occursOn(e, k) && isUntimedOn(e, k)))
   const hasAllDay = allDayByDay.some(list => list.length > 0)
   const timedByDay = keys.map(k => layoutDay(events, k))
 
@@ -144,7 +158,7 @@ export default function WeekView({ days, today, nowMinutes, events, settings, on
                       }}
                     >
                       <span className="week-event__title">{p.event.title || '（タイトルなし）'}</span>
-                      <span className="week-event__time">{p.event.startDate === key ? p.event.startTime : '0:00'}</span>
+                      <span className="week-event__time">{timeText(p.event, key)}</span>
                     </button>
                   )
                 })}

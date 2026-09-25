@@ -2,8 +2,8 @@ import { useState } from 'react'
 import type { AllDayReminderDay, CalendarEvent, ColorId, EventDraft, Reminder } from '../types'
 import { ALL_DAY_REMINDER_OPTIONS, COLORS, COLOR_MAP, REMINDER_OPTIONS } from '../types'
 import { addDays, differenceInCalendarDays, format } from 'date-fns'
-import { formatDayLabel, fromKey, fromMinutes, toMinutes } from '../lib/date'
-import { BellIcon, CheckIcon, ChevronRight, ClockIcon, NoteIcon, PaletteIcon, PinIcon, TrashIcon } from './Icons'
+import { formatDayLabel, fromKey, fromMinutes, hasNoStartTime, toMinutes } from '../lib/date'
+import { BellIcon, CheckIcon, ChevronRight, ClockIcon, NoteIcon, PaletteIcon, PinIcon, TrashIcon, XIcon } from './Icons'
 
 interface Props {
   initial: EventDraft
@@ -31,6 +31,23 @@ function TimeChip({ value, onChange, label }: { value: string; onChange: (v: str
   )
 }
 
+/** 開始・終了の時刻。「×」で時刻なしにでき、時刻なしのときはタップで時刻を選べる */
+function OptionalTimeChip({ value, onChange, label }: { value: string; onChange: (v: string) => void; label: string }) {
+  return (
+    <span className="time-field">
+      <label className={`picker-chip is-time${value ? '' : ' is-empty'}`}>
+        {value || '時刻なし'}
+        <input type="time" aria-label={label} value={value} onChange={e => e.target.value && onChange(e.target.value)} />
+      </label>
+      {value && (
+        <button type="button" className="clear-btn" aria-label={`${label}をなしにする`} onClick={() => onChange('')}>
+          <XIcon size={14} />
+        </button>
+      )}
+    </span>
+  )
+}
+
 export default function EventForm({ initial, editing, onSave, onDelete, onClose }: Props) {
   const [d, setD] = useState<EventDraft>(initial)
   const set = <K extends keyof EventDraft>(key: K, value: EventDraft[K]) => setD(prev => ({ ...prev, [key]: value }))
@@ -41,7 +58,7 @@ export default function EventForm({ initial, editing, onSave, onDelete, onClose 
     return { ...prev, startDate: v, endDate: format(addDays(fromKey(v), span), 'yyyy-MM-dd') }
   })
   const changeStartTime = (v: string) => setD(prev => {
-    if (prev.startDate !== prev.endDate) return { ...prev, startTime: v }
+    if (!v || !prev.startTime || !prev.endTime || prev.startDate !== prev.endDate) return { ...prev, startTime: v }
     const duration = Math.max(0, toMinutes(prev.endTime) - toMinutes(prev.startTime))
     const end = toMinutes(v) + duration
     if (end >= 24 * 60) {
@@ -51,7 +68,8 @@ export default function EventForm({ initial, editing, onSave, onDelete, onClose 
   })
 
   const endBeforeStart = d.endDate < d.startDate ||
-    (!d.allDay && d.endDate === d.startDate && toMinutes(d.endTime) < toMinutes(d.startTime))
+    (!d.allDay && d.endDate === d.startDate && d.startTime !== '' && d.endTime !== '' &&
+      toMinutes(d.endTime) < toMinutes(d.startTime))
   const canSave = d.title.trim() !== '' && !endBeforeStart
   const color = COLOR_MAP[d.color]
 
@@ -108,7 +126,7 @@ export default function EventForm({ initial, editing, onSave, onDelete, onClose 
                 <span className="row__label">開始</span>
                 <div className="picker-group">
                   <DateChip label="開始日" value={d.startDate} onChange={changeStartDate} />
-                  {!d.allDay && <TimeChip label="開始時刻" value={d.startTime} onChange={changeStartTime} />}
+                  {!d.allDay && <OptionalTimeChip label="開始時刻" value={d.startTime} onChange={changeStartTime} />}
                 </div>
               </div>
             </div>
@@ -118,7 +136,7 @@ export default function EventForm({ initial, editing, onSave, onDelete, onClose 
                 <span className="row__label">終了</span>
                 <div className="picker-group">
                   <DateChip label="終了日" value={d.endDate} onChange={v => set('endDate', v)} />
-                  {!d.allDay && <TimeChip label="終了時刻" value={d.endTime} onChange={v => set('endTime', v)} />}
+                  {!d.allDay && <OptionalTimeChip label="終了時刻" value={d.endTime} onChange={v => set('endTime', v)} />}
                 </div>
               </div>
             </div>
@@ -146,7 +164,7 @@ export default function EventForm({ initial, editing, onSave, onDelete, onClose 
           </div>
 
           <div className="card">
-            {d.allDay ? (
+            {hasNoStartTime(d) ? (
               <div className="row">
                 <span className="row__icon"><BellIcon size={18} /></span>
                 <div className="row__body">

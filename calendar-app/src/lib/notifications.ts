@@ -2,7 +2,7 @@ import { Capacitor } from '@capacitor/core'
 import { LocalNotifications } from '@capacitor/local-notifications'
 import { addDays, addMinutes, parse } from 'date-fns'
 import { type CalendarEvent, REMINDER_OPTIONS } from '../types'
-import { formatDayLabel } from './date'
+import { formatDayLabel, hasNoStartTime } from './date'
 
 const CHANNEL_ID = 'reminders'
 // Android はアプリごとに予約できるアラーム数に上限（約500）があるため、近いものから予約する
@@ -43,7 +43,7 @@ export async function requestPermission(): Promise<PermissionStatus> {
 
 /** 通知を出す日時（通知なしなら null） */
 export function reminderAt(event: CalendarEvent): Date | null {
-  if (event.allDay) {
+  if (hasNoStartTime(event)) {
     if (event.allDayReminderDay === 'none') return null
     const base = parse(`${event.startDate} ${event.allDayReminderTime}`, 'yyyy-MM-dd HH:mm', new Date())
     return event.allDayReminderDay === 'before' ? addDays(base, -1) : base
@@ -55,12 +55,15 @@ export function reminderAt(event: CalendarEvent): Date | null {
 
 function notificationBody(event: CalendarEvent): string {
   const parts: string[] = []
+  const day = formatDayLabel(event.startDate)
   if (event.allDay) {
-    parts.push(`${formatDayLabel(event.startDate)} 終日`)
+    parts.push(`${day} 終日`)
+  } else if (!event.startTime) {
+    parts.push(event.endTime ? `${day} 〜${event.endTime}` : day)
   } else {
     const label = REMINDER_OPTIONS.find(o => o.value === event.reminder)?.label ?? ''
     const when = event.reminder === '0' ? '今から' : label.replace('前', '後')
-    parts.push(`${formatDayLabel(event.startDate)} ${event.startTime}〜${event.endTime}（${when}）`)
+    parts.push(`${day} ${event.startTime}〜${event.endTime}（${when}）`)
   }
   if (event.location) parts.push(event.location)
   return parts.join('・')

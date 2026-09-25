@@ -3,7 +3,7 @@ import { App as CapApp } from '@capacitor/app'
 import { addMonths, addWeeks, format, startOfMonth } from 'date-fns'
 import type { CalendarEvent, EventDraft } from './types'
 import { useCalendarData } from './hooks/useCalendarData'
-import { fromKey, toKey, todayKey, weekDays } from './lib/date'
+import { fromKey, hasNoStartTime, toKey, todayKey, weekDays } from './lib/date'
 import { holidayName } from './lib/holidays'
 import { type PermissionStatus, checkPermission, initNotifications, isNative, requestPermission } from './lib/notifications'
 import { exportBackup, parseBackup } from './lib/backup'
@@ -139,7 +139,7 @@ export default function App() {
     else data.addEvent(draft)
     popScreen()
     selectDay(draft.startDate)
-    const wantsReminder = draft.allDay ? draft.allDayReminderDay !== 'none' : draft.reminder !== 'none'
+    const wantsReminder = hasNoStartTime(draft) ? draft.allDayReminderDay !== 'none' : draft.reminder !== 'none'
     if (isNative && wantsReminder && permission === 'prompt') {
       const status = await requestPermission()
       setPermission(status)

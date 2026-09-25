@@ -19,6 +19,7 @@ export const PinIcon = (p: Props) => <Svg {...p}><path d="M12 21s-7-6.2-7-11.5A7
 export const ClockIcon = (p: Props) => <Svg {...p}><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></Svg>
 export const BellIcon = (p: Props) => <Svg {...p}><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9" /><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0" /></Svg>
 export const NoteIcon = (p: Props) => <Svg {...p}><path d="M4 6h16M4 12h16M4 18h10" /></Svg>
+export const XIcon = (p: Props) => <Svg {...p}><path d="M6 6l12 12M18 6L6 18" /></Svg>
 export const CheckIcon = (p: Props) => <Svg strokeWidth={3.2} {...p}><path d="M5 12.5l4.5 4.5L19 7.5" /></Svg>
 export const TrashIcon = (p: Props) => <Svg {...p}><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3" /></Svg>
 export const DownloadIcon = (p: Props) => <Svg {...p}><path d="M12 3v12M7 10l5 5 5-5M5 21h14" /></Svg>

@@ -82,7 +82,7 @@ h1, h2, p { margin: 0; }
 
 /* 予定の行（月表示の一覧・検索結果で共通） */
 .event-row { width: 100%; display: flex; align-items: center; gap: 12px; min-height: 56px; padding: 0; border: none; background: transparent; text-align: left; }
-.event-row__time { width: 44px; flex-shrink: 0; display: flex; flex-direction: column; align-items: flex-end; font-size: 13px; line-height: 18px; }
+.event-row__time { width: 52px; white-space: nowrap; flex-shrink: 0; display: flex; flex-direction: column; align-items: flex-end; font-size: 13px; line-height: 18px; }
 .event-row__time b { font-weight: 600; }
 .event-row__time span { color: var(--subtle); }
 .event-row__bar { width: 4px; height: 36px; border-radius: 2px; flex-shrink: 0; }
@@ -146,6 +146,9 @@ h1, h2, p { margin: 0; }
 .picker-group { display: flex; gap: 6px; }
 .picker-chip { position: relative; height: 34px; padding: 0 10px; border-radius: 8px; background: var(--chip); font-size: 14px; line-height: 34px; white-space: nowrap; overflow: hidden; }
 .picker-chip.is-time { width: 64px; text-align: center; font-weight: 600; }
+.picker-chip.is-empty { width: auto; font-size: 13px; font-weight: 500; color: var(--muted); }
+.time-field { display: flex; align-items: center; }
+.clear-btn { width: 28px; height: 34px; margin-right: -6px; border: none; background: transparent; padding: 0; display: flex; align-items: center; justify-content: center; color: var(--faint); }
 .picker-chip input, .picker-chip select { position: absolute; inset: 0; opacity: 0; width: 100%; height: 100%; border: none; padding: 0; }
 
 .select-wrap { position: relative; display: flex; align-items: center; gap: 4px; font-size: 14px; color: var(--muted); }

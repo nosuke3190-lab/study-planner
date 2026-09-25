@@ -62,11 +62,26 @@ export function occursOn(event: CalendarEvent, key: string): boolean {
   return event.startDate <= key && key <= event.endDate
 }
 
+/** 開始時刻がない予定（終日・時刻なし）。通知は「当日／前日＋時刻」で決める */
+export function hasNoStartTime(event: Pick<CalendarEvent, 'allDay' | 'startTime'>): boolean {
+  return event.allDay || event.startTime === ''
+}
+
 export function compareEvents(a: CalendarEvent, b: CalendarEvent): number {
   if (a.allDay !== b.allDay) return a.allDay ? -1 : 1
   if (a.startDate !== b.startDate) return a.startDate < b.startDate ? -1 : 1
-  if (!a.allDay && a.startTime !== b.startTime) return a.startTime < b.startTime ? -1 : 1
+  const at = hasNoStartTime(a) ? '' : a.startTime
+  const bt = hasNoStartTime(b) ? '' : b.startTime
+  if (at !== bt) return at < bt ? -1 : 1
   return a.createdAt - b.createdAt
+}
+
+/** その日の開始・終了（分）。時刻なしは null */
+export function daySpan(event: CalendarEvent, key: string): { start: number | null; end: number | null } {
+  if (event.allDay) return { start: null, end: null }
+  const s = event.startDate === key ? event.startTime : '00:00'
+  const e = event.endDate === key ? event.endTime : '24:00'
+  return { start: s ? toMinutes(s) : null, end: e ? toMinutes(e) : null }
 }
 
 export function eventsOn(events: CalendarEvent[], key: string): CalendarEvent[] {
@@ -78,11 +93,10 @@ export function timeLabels(event: CalendarEvent, key: string): [string, string] 
   if (event.allDay) return ['終日', '']
   const start = event.startDate === key ? event.startTime : '0:00'
   const end = event.endDate === key ? event.endTime : '24:00'
-  return [start, end]
-}
-
-export function eventStart(event: CalendarEvent): Date {
-  return parse(`${event.startDate} ${event.allDay ? '00:00' : event.startTime}`, 'yyyy-MM-dd HH:mm', new Date())
+  if (start && end) return [start, end]
+  if (start) return [`${start}〜`, '']
+  if (end) return [`〜${end}`, '']
+  return ['時間なし', '']
 }
 
 /** 日曜・祝日は赤、土曜は青のクラス名 */
