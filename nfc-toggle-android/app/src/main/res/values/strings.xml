@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">NFCスイッチ</string>
+    <string name="toggle_label">NFC切り替え</string>
+    <string name="widget_label">NFCスイッチ</string>
+    <string name="tile_label">NFC</string>
+
+    <string name="state_on">NFC ON</string>
+    <string name="state_off">NFC OFF</string>
+    <string name="state_unsupported">NFC非対応</string>
+
+    <string name="button_turn_on">NFCをONにする</string>
+    <string name="button_turn_off">NFCをOFFにする</string>
+    <string name="toast_on">NFCをONにしました</string>
+    <string name="toast_off">NFCをOFFにしました</string>
+    <string name="nfc_unsupported">この端末はNFCに対応していません</string>
+
+    <string name="section_shortcuts">すぐ切り替えられるようにする</string>
+    <string name="add_widget">ホーム画面にウィジェットを追加</string>
+    <string name="add_tile">クイック設定タイルを追加</string>
+    <string name="widget_manual">ホーム画面を長押し →「ウィジェット」→「NFCスイッチ」から追加してください</string>
+
+    <string name="root_mode">ワンタップで直接切り替え（root端末のみ）</string>
+    <string name="root_desc">Androidの仕様で、一般アプリはNFCを直接ON/OFFできません。通常はタップするとNFCのミニパネルが開くので、スイッチを1回押してください。root化済みの端末ならこれをONにすると、パネルなしで即切り替えできます。</string>
+    <string name="root_enabled">rootモードを有効にしました</string>
+    <string name="root_unavailable">root権限を取得できませんでした（Android 9以降のroot化端末が必要です）</string>
+    <string name="root_failed">直接切り替えに失敗したので設定パネルを開きます</string>
+</resources>

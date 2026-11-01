@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="accent">#8AB4F8</color>
+    <color name="on_bg">#8AB4F8</color>
+    <color name="on_text">#202124</color>
+    <color name="off_bg">#3C4043</color>
+    <color name="off_text">#BDC1C6</color>
+    <color name="screen_bg">#121212</color>
+    <color name="text_primary">#E8EAED</color>
+    <color name="text_secondary">#9AA0A6</color>
+</resources>
